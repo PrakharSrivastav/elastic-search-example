@@ -14,11 +14,10 @@ Elastic search. Basic usage and examples
 - 5 Import the data to the server. ```curl -H "Content-Type: application/json" -XPOST "localhost:9200/bank/_doc/_bulk?pretty&refresh" --data-binary "@accounts.json"```
 - 6 Check if the data is imported properly ```curl -H "Content-Type: application/json" -XPOST "localhost:9200/bank/_doc/_bulk?pretty&refresh" --data-binary "@accounts.json"```
  	The output should look like:
-
-
-  health | status | index | uuid | pri | rep | docs.count | docs.deleted | store.size | pri.store.size
-  :--- | :--- | :--- | :--- | :--------- | :--- | :--- | :--- | :--- | :--- | :---  
-  yellow | open | bank | A5ejzr5AQduXc-xGJ3Vcmw | 5 | 1 | 0 | 0 | 1.1kb | 1.1kb
   
+health | status | index | uuid | pri  | rep  | docs.count | docs.deleted | store.size | pri.store.size
+:---   | :----- | :---- | :--- | :--- | :--- | :---       | :---         | :---       | :---  
+yellow | open   | bank  | xGJ3Vcmw | 5 | 1 | 0 | 0 | 1.1kb | 1.1kb
 
 ## Other
+
