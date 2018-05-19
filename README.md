@@ -5,7 +5,8 @@ Elastic search. Basic usage and examples
 
 ## Intention
 
-The intention of this document is to quickly setup elasticsearch environment for developers. Their are instructions for setting up initial data and performing simple search requests using commandline. More language specific examples will be added soon.
+This document should help developers to quickly setup elasticsearch environment for evaluation. There are instruction to set up initial data and perform simple search requests via curl.  
+More language specific examples would be added soon.
 
 ## Setup and installation
 
