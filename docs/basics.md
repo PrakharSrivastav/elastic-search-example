@@ -14,7 +14,7 @@
 - Consists of fields with a datatype.
 - Similar to object in OOP, or a row in RDBMS.
 - Expressed in JSON.
-- No limit on the number of documents that can be stored in an index.
+- No limity on the number of documents that can be stored in an index.
   
 ## Index :
 
