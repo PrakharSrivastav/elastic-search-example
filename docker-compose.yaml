@@ -70,12 +70,105 @@ services:
       ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
     networks:
       - elastic
+
+  sftp_server:
+    image: atmoz/sftp
+    volumes:
+      - ./upload:/home/foo/upload
+    ports:
+      - "2222:22"
+    expose:
+      - "22"
+    command: foo:pass:1001
+    networks:
+      - elastic
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - integration
+    ports:
+      - "9000:9000"
+    networks:
+      - elastic
+
+  integration:
+    image: svv:001
+    expose:
+      - "8081"
+    deploy:
+      replicas: 1
+    environment:
+      SFTP_HOST: 192.168.0.46 # your local ip
+      SFTP_PORT: 2222
+      SPRING_PROFILES_ACTIVE: local
+    networks:
+      - elastic
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://192.168.0.46:12201" # Logstash UDP input port
+        tag: "integration"
+
+  logstash-agent:
+    image: logstash:7.11.1
+    volumes:
+      - ./ls-agent:/etc/logstash
+    command: logstash -f /etc/logstash/logstash.conf
+    depends_on:
+      - es01
+    ports:
+      - 12201:12201/udp    
+    networks:
+      - elastic
+
+  logstash-central:
+    image: logstash:7.11.1
+    volumes:
+      - ./ls-central:/etc/logstash
+    command: logstash -f /etc/logstash/logstash.conf
+    depends_on:
+      - es01   
+    networks:
+      - elastic
+
+  redis-cache:
+    image: redis:6.2
+    networks:
+      - elastic
+    expose:
+      - "6379"
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.11.1
+    environment:
+      ELASTICSEARCH_HOSTS: http://es01:9200
+      KIBANA_HOSTS: http://kib01:5601
+    user: root
+    volumes:
+      - ./metricbeat-data01:/usr/share/metricbeat/data
+      - ./metricbeat-conf/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      #- ./metricbeat-conf/docker.yml:/usr/share/metricbeat/modules.d/docker.yml.2
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    networks:
+      - elastic
+    depends_on:
+      - es01
+
+
 volumes:
   data01:
     driver: local
   data02:
     driver: local
   data03:
+    driver: local
+  metricbeat-data01:
     driver: local
 
 networks:
